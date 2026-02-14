@@ -39,6 +39,7 @@ Abre `demo.ipynb` y ejecuta las celdas en orden.
 - Abre `demo.ipynb` desde GitHub en Colab.
 - La primera celda detecta Colab y clona el repositorio en `/content/tfm` si hace falta.
 - Define `ORCHESTRATOR_BASE` apuntando a un backend accesible desde Colab (por defecto usa `http://127.0.0.1:9000`, que en Colab normalmente no aplica).
+  - Ejemplo en una celda previa: `%env ORCHESTRATOR_BASE=https://abc123.ngrok-free.app`
 - Ejecuta las celdas en orden.
 
 Opcionalmente, puedes fijar el modelo antes de abrir el notebook:
