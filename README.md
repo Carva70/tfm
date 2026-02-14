@@ -35,6 +35,12 @@ El backend quedará en `http://127.0.0.1:9000`.
 ### 5) Abrir y ejecutar el notebook
 Abre `demo.ipynb` y ejecuta las celdas en orden.
 
+### Ejecutar en Google Colab
+- Abre `demo.ipynb` desde GitHub en Colab.
+- La primera celda detecta Colab y clona el repositorio en `/content/tfm` si hace falta.
+- Define `ORCHESTRATOR_BASE` apuntando a un backend accesible desde Colab (por defecto usa `http://127.0.0.1:9000`, que en Colab normalmente no aplica).
+- Ejecuta las celdas en orden.
+
 Opcionalmente, puedes fijar el modelo antes de abrir el notebook:
 ```bash
 export ORCHESTRATOR_MODEL=llama3.1:8b
