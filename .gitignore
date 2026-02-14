@@ -1,0 +1,27 @@
+# Entornos virtuales
+tfm-env/
+.venv/
+venv/
+
+# Python cache/build
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Variables de entorno locales
+.env
+
+# Base de datos y artefactos generados
+*.db
+logs/logs.jsonl
+tests/results/notebook_demo/
+
+# Frontend artefactos
+llm-front/node_modules/
+llm-front/dist/
+
+# OS/editor
+.DS_Store
+.vscode/
