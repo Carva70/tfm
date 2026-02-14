@@ -1,8 +1,9 @@
 \chapter*{Abstract}
 
-Este TFM tiene como objetivo estudiar las distintas vulnerabilidades relacionadas con el prompt injection en un contexto corporativo.
-Se simularán entornos con modelos de lenguajes locales (LLaMA, etc.) para reproducir escenarios de ataque. 
+\vspace{20px}
 
-Incluirá la propuesta de un conjunto de controles de mitigación en contextos reales.
+Este trabajo estudia la vulnerabilidad a ataques de prompt injection en asistentes basados en modelos de lenguaje desplegados en entornos corporativos. Para ello, se implementa un entorno experimental reproducible con modelos locales, una base de datos de prueba y un orquestador que enruta solicitudes entre tareas de clasificación, generación de consultas y respuesta final. Sobre este entorno se diseña un conjunto de casos de prueba para medir exposición a filtraciones de datos y comportamientos inseguros en distintos modelos.
 
-\clave{}
+Los resultados muestran diferencias relevantes según el tamaño y especialización del modelo, especialmente en tareas de clasificación. Además, se evalúa el impacto de varios controles defensivos: filtrado léxico en la clasificación, reducción del esquema SQL compartido con el modelo, limitación de contexto, corte de streaming ante señales de riesgo y logs para auditoría. Estas medidas reducen de forma significativa la superficie de ataque y las filtraciones observadas.
+
+\clave{Prompt injection, ciberseguridad en LLM, orquestación de agentes, exfiltración, modelos de lenguaje locales}

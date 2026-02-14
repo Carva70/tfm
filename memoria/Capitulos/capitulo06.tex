@@ -47,7 +47,7 @@ def _clean_sql_info(table_name: str, columns: list[tuple]) -> list[tuple]:
 
 \subsection{Reducción del contexto conversacional.}
 
-Limitación de la cantidad de mensajes del contexto para evitar inyecciones persistentes. Se busca prevenir instrucciones maliciosas de mensajes anteriores. \ref{lst:orchestrated-stream-filter} (Memory Hardening, AML.M0031)
+Limitación de la cantidad de mensajes del contexto para evitar inyecciones persistentes. Se busca prevenir instrucciones maliciosas de mensajes anteriores. (Mostrado en el cuadro~\ref{lst:orchestrated-stream-filter} (Memory Hardening, AML.M0031)
 
 \subsection{Corte de streaming}
 
@@ -164,10 +164,10 @@ Además de los controles técnicos, se proponen los siguientes controles organiz
 Aunque los controles anteriores reducen significativamente el riesgo, no eliminan por completo la posibilidad de ataque. En particular, se identifican las siguientes limitaciones:
 
 \begin{itemize}
-    \item \textbf{Filtro léxico vulnerable a evasión}: la detección por palabras clave puede ser evitada mediante ofuscación (sinónimos, codificación, separadores, homoglifos Unicode o fragmentación semántica). Esto genera \emph{falsos negativos}.
-    \item \textbf{Impacto en usabilidad y precisión}: los filtros estrictos y el corte de streaming pueden bloquear consultas legítimas que incluyen términos sensibles en contextos permitidos (docencia, pruebas o auditoría), produciendo \emph{falsos positivos} y respuestas incompletas.
+    \item \textbf{Filtro léxico vulnerable a evasión}: la detección por palabras clave puede ser evitada mediante ofuscación (sinónimos, codificación, separadores, homoglifos Unicode o fragmentación semántica). Esto genera falsos negativos.
+    \item \textbf{Impacto en usabilidad y precisión}: los filtros estrictos y el corte de streaming pueden bloquear consultas legítimas que incluyen términos sensibles en contextos permitidos (docencia, pruebas o auditoría), produciendo falsos positivos y respuestas incompletas.
     \item \textbf{Control de streaming basado en patrones}: el bloqueo en tiempo real depende de coincidencias locales en una ventana limitada. Exfiltraciones fragmentadas o reformuladas pueden no activar el corte.
-    \item \textbf{Coste operativo y latencia}: cada capa adicional (clasificación, validación y monitorización de salida) incrementa latencia y complejidad de mantenimiento, especialmente en despliegues con alta concurrencia.
+    \item \textbf{Coste operativo y latencia}: cada capa adicional (clasificación, validación y monitorización de salida) incrementa latencia y complejidad de mantenimiento.
     \item \textbf{Logs no equivalen a prevención}: el registro de eventos mejora trazabilidad y auditoría, pero su efectividad depende de revisión activa, políticas de retención y protección de los propios logs frente a acceso no autorizado.
 \end{itemize}
 Por lo tanto el uso de estos controles debe complementarse con evaluaciones periódicas, pruebas de evasión continuas y supervisión humana en escenarios de alto impacto.
