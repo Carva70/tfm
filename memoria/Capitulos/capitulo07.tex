@@ -1,0 +1,21 @@
+\chapter{Conclusiones y trabajo futuro}
+
+\section{Conclusiones}
+
+\begin{itemize}
+    \item Se ha implementado un entorno que reproduce un flujo de mensajes entre el modelo, el usuario y la base de datos, mediante un árbol de orquestación que facilita la trazabilidad al registrar decisiones de clasificación en el log de seguridad.
+
+    \item En las pruebas, se ha comprobado que los modelo pequeños presentan más problemas en las tareas de clasificación, mientras que modelos mas grandes y dedicados enrutan de forma más segura, aunque sigan teniendo fallos. Se comprueba que el tamaño y tipo de modelo influye en la capacidad de seguir políticas de seguridad.
+
+    \item Los controles implementados (filtrado por palabras clave en la clasificación, reducción del esquema sql proporcionado a la generación de consultas, reducción del contexto y corte de streaming) mejoran el resultado de las pruebas significativamente y reducen las filtraciones.
+
+    \item Los tests sirven como base reproducible para la evaluación de modelos y validar controles dedicados al prompt injection.
+\end{itemize}
+
+\section{Trabajo futuro}
+
+\begin{itemize}
+    \item Aumentar la complejidad de los tests descritos en la página \pageref{fig:safety-matrix-control}.
+    \item Analizar entornos con Deep Agents, sistemas mucho más complejos con múltiples agenetes y pasos dinámicos. Entornos mucho más complejos y difíciles de controlar.
+    \item Usar entornos cloud y APIs de pago para la evaluación de modelos más grandes.
+\end{itemize}

@@ -1,0 +1,107 @@
+\chapter{Estado del arte}
+
+\section{Modelos de lenguaje y tipos de despliegue}
+
+Los modelos de lenguaje disponibles se pueden utilizar o bien mediante una API de un servicio (como OpenAI) o ejecutando el modelo localmente con aplicaciones como Ollama. Esta última será la utilizada en este trabajo para la ejecución de modelos de forma local.
+
+\begin{itemize}
+    \item \textbf{API:} GPT \cite{openai_platform}, Claude, Gemini.
+    \item \textbf{Open-weight (local):} Llama \cite{meta_llama}, Mistral, Qwen, Gemma.
+\end{itemize}
+
+Los modelos se pueden dividir en \textbf{base}, que son los modelos originales que se encargan de completar el texto; y los \textbf{instruct}, que han sido afinados (fine-tuned) para seguir instrucciones y mantener interacciones conversacionales.
+
+\section{Acceso a herramientas y orquestación}
+
+Hoy en día, los LLMs se suelen usar como interfaces que acceden a herramientas externas. Uno de los patrones más comunes es el tool-calling, en donde el modelo genera datos estructurados (generalmente en formato JSON) para ejecutar acciones en un sistema externo, como acceso a bases de datos, herramientas, etc.
+
+La coordinación del flujo de mensajes de un modelo a otro es lo que se conoce como \textbf{orquestación}. Uno de los frameworks estándar para definición de nodos, grafos y reglas de transición es LangGraph \cite{langchain}; y LangChain para la definición y ejecución de herramientas.
+
+
+
+\section{Historia y evolución de las amenazas}
+
+El desarrollo de los modelos de lenguaje comienza con la creación de transformers \cite{vaswani2017attention}, arquitectura de inteligencia artificial diseñada para procesar y producir texto en lenguaje natural mediante mecanismos de atención. A partir de ahí surgen modelos básicos como BERT \cite{devlin2018bert}, y más adelante modelos con mucha más capacidad como GPT \cite{brown2020gpt3}. 
+
+Técnicas como instruction tuning y RLHF (Reinforcement Learning from Human Feedback) dieron pie a los modelos instruct, que son la base de los asistentes de hoy en día, ya que estos están afinados para seguir instrucciones \cite{ouyang2022instructgpt}.
+
+\newpage
+
+\subsection{Evolución del panorama de amenazas}
+
+\begin{wrapfigure}{l}{0.4\linewidth}
+    \centering
+    \includegraphics[width=0.9\linewidth]{Imagenes/yt_bot_prompt_injection.png}
+    \caption{Una forma temprana y popular de prompt injection: ``ignora las instrucciones previas...''}
+    \label{fig:prompt_injection_yt}
+\end{wrapfigure}
+
+Este avance permitió integrar modelos en flujos más complejos, permitiendo al modelo controlar todo tipo de herramientas (buscar en la web, acceso a bases de datos, control de APIs externas); este nuevo paradigma abre nuevas posibilidades de ataque. 
+
+Las técnicas adversariales e incidentes aumentan significativamente en 2023, año en el que se empiezan a usar con más frecuencia este tipo de agentes en todo tipo de despliegues (bots de atención al cliente, asistentes corporativos, sistemas de automatización). Muchos de estos despliegues iniciales eran vulnerables a todo tipo de ataques de inyección. 
+
+Fue muy popular entonces descubrir si un usuario era un bot con la inyección ``ignora las instrucciones previas...'' \ref{fig:prompt_injection_yt} \cite{gulyamov2026promptinjection}, una técnica simple pero efectiva que expuso la fragilidad de muchos sistemas en producción.
+
+\subsection{Crecimiento exponencial de la investigación}
+
+Entre 2023 y 2026, la investigación sobre seguridad en LLMs experimentó un crecimiento sin precedentes:
+
+\begin{itemize}
+    \item El número de publicaciones académicas sobre vulnerabilidades en LLMs creció de decenas a más de 700 en ArXiv.
+    \item OWASP expandió su proyecto de un pequeño grupo a una comunidad global de más de 8,000 miembros activos y 600 expertos contribuyentes.
+    \item Las agencias gubernamentales (ENISA, NIST) comenzaron a publicar guías específicas sobre seguridad de IA generativa.
+\end{itemize}
+
+\section{Marco regulatorio, AI Act}
+
+El uso de modelos de lenguaje en entornos corporativos, especialmente cuando interactúan con información sensible, implica obligaciones de protección de datos personales, cumplimiento y trazabilidad. El \textbf{AI Act} de la Unión Europea \cite{eu_ai_act} representa el primer marco regulatorio integral para la inteligencia artificial, estableciendo:
+
+\begin{itemize}
+    \item \textbf{Clasificación por niveles de riesgo:} Sistemas de IA clasificados en riesgo inaceptable, alto, limitado y mínimo.
+    \item \textbf{Requisitos de transparencia:} Obligación de informar a los usuarios cuando interactúan con sistemas de IA.
+    \item \textbf{Documentación técnica:} Requisitos de trazabilidad y documentación del ciclo de vida del sistema.
+    \item \textbf{Evaluación de conformidad:} Procedimientos de evaluación para sistemas de alto riesgo.
+    \item \textbf{Supervisión post-mercado:} Monitoreo continuo del rendimiento y seguridad de sistemas desplegados.
+\end{itemize}
+
+\section{Informes y guías de referencia}
+
+OWASP ha establecido una taxonomía de los 10 riesgos más críticos en aplicaciones basadas en LLMs \cite{owasp_llmtop10}. En relación con este proyecto, los riesgos son los siguientes:
+
+\begin{itemize}
+    \item \textbf{LLM01: Prompt Injection}
+    \item \textbf{LLM02: Sensitive Information Disclosure} - Exposición de información sensible en las salidas del modelo.
+    \item \textbf{LLM05: Improper Output Handling} - Validación y sanitización insuficiente de las salidas del LLM.
+    \item \textbf{LLM06: Excessive Agency} - Permisos excesivos.
+
+    \item \textbf{LLM08: Vector and Embedding Weaknesses} - Vulnerabilidades en sistemas de embeddings y bases de datos vectoriales.
+
+\end{itemize}
+
+NIST proporciona el AI Risk Management Framework (AI RMF) \cite{nist_ai_rmf}, un marco integral para:
+
+\begin{itemize}
+    \item Gestión de riesgos en sistemas de IA a lo largo de su ciclo de vida.
+    \item Evaluación de seguridad y confiabilidad de modelos de lenguaje.
+    \item Estándares para la documentación y trazabilidad de sistemas de IA.
+    \item Medidas de protección contra ataques adversariales.
+\end{itemize}
+
+El framework establece cuatro funciones principales: Gobernar, Mapear, Medir y Gestionar, proporcionando un enfoque sistemático para identificar y mitigar riesgos en sistemas de IA.
+
+
+\section{Casos documentados de vulnerabilidades}
+
+\begin{itemize}
+    \item \textbf{Sistemas de pago (Google Agent Payments Protocol):} manipulación de transacciones y evasión de controles de autorización mediante prompt injection \cite{debi2026wealth}.
+
+    \item \textbf{Entornos médicos (benchmark MPIB):} alteración en recomendaciones clínicas, filtración de datos sensibles, manipulación de recuperación de información en sistemas LLM+RAG \cite{lee2026mpib}.
+
+    \item \textbf{Model Context Protocol (MCP):} se identificaron fallos de diseño en autenticación y confianza entre servidores, permitiendo escalado de privilegios e inyección desde componentes externos \cite{maloyan2026mcp}.
+
+    \item \textbf{Evasión de detección de phishing (asistido por llm):} ataques logran desviar el análisis del modelo \cite{koide2026clouding}.
+
+    \item \textbf{Generación automática de ataques:} técnicas con ML produjeron inyecciones adaptativas más eficaces que estrategias manuales \cite{chen2026learning}.
+
+    \item \textbf{Evasión de defensas:} ofuscación semántica y la fragmentación multi-turno pueden burlar detectores actuales de prompt injection \cite{rahman2026bypassing}.
+\end{itemize}

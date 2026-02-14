@@ -1,0 +1,173 @@
+\chapter{Diseño de controles}
+
+\section{Controles técnicos}
+\subsection{Filtro por palabras clave}
+
+En la propia clasificación, existe un filtro que bloquea los prompts que contienen indicativos de instrucciones maliciosas (cualquier término sensible como IBAN, tarjetas, clients\_pii, información personal, etc.). Se ejecutaría antes de la clasificación, reduciendo el riesgo de inyecciones que intentan forzar la ruta a la base de datos. La implementación consiste en convertir el prompt en minúsculas y comprobar coincidencias con términos sensibles; y devolver \texttt{malicious\_request} como clasificación del nodo. (Generative AI Guardrails, AML.M0020; Adversarial Input Detection, AML.M0015; Restrict AI Agent Tool Invocation on Untrusted Data, AML.M0030)
+
+\begin{lstlisting}[language=Python,caption={Nodo de clasificación con salida segura},label={lst:classify-node-filter}]
+async def classify_node(state: OrchestrationState) -> dict[str, Any]:
+    prompt = state.get("prompt", "") or ""
+    prompt_l = prompt.lower()
+    payload = state.get("payload", {}) or {}
+    model_name = payload.get("classification_model") or payload.get("model")
+
+
+    if any(keyword in prompt_l for keyword in SENSITIVE_KEYWORDS):
+        _log_event("sensitive_info_detected", {"prompt": prompt})
+        return {"route": "malicious_request"}
+
+    try:
+        cl = await classify_request_tool.ainvoke({
+            "prompt": prompt,
+            "model": model_name,
+        })
+        cl = (cl or "").strip()
+        if cl not in RUTAS:
+            cl = "simple_request"
+        return {"route": cl}
+    except Exception:
+        return {"route": "simple_request"}
+\end{lstlisting}
+
+\subsection{Reducción del esquema expuesto al modelo}
+
+Dentro del contexto de la generación de las sentencias se quitan los campos con información sensible. Al restringir información al modelo, se evitan muchos casos de exfiltración pero la calidad de respuestas puede reducir. (Privileged AI Agent Permissions Configuration, AML.M0026)
+
+\begin{lstlisting}[language=Python,caption={Filtrado de columnas sensibles},label={lst:sanitize_schema}]
+def _clean_sql_info(table_name: str, columns: list[tuple]) -> list[tuple]:
+    if (table_name or "").lower() == CLIENTS_PII:
+        return []
+    safe_columns = [
+        col for col in columns
+        if not any(n in (col[1] or "").lower() for n in SENSITIVE_KEYWORDS)
+    ]
+    return safe_columns
+\end{lstlisting}
+
+\subsection{Reducción del contexto conversacional.}
+
+Limitación de la cantidad de mensajes del contexto para evitar inyecciones persistentes. Se busca prevenir instrucciones maliciosas de mensajes anteriores. \ref{lst:orchestrated-stream-filter} (Memory Hardening, AML.M0031)
+
+\subsection{Corte de streaming}
+
+Es un control de última barrera; se filtra cada token generado por streaming, y si coincide con un término sensible o con un patrón sospechoso, se corta el stream por completo. (Generative AI Guardrails, AML.M0020; Input and Output Validation for AI Agent Components, AML.M0033)
+
+\begin{lstlisting}[language=Python,caption={Controles de contexto y filtro de streaming},label={lst:orchestrated-stream-filter}]
+async def orchestrated_stream(payload):
+
+    ...
+
+    reduced_conv = conv_store.get(session_id, [])[-MAX_MESSAGES:]
+
+    ...
+
+    response_text = ""
+    stream_buffer = ""
+    try:
+        async for token in stream_from_ollama(payload, reduced_conv):
+            response_text += token
+            stream_buffer = (stream_buffer + token)[-500:]
+            if _stream_contains_sensitive(stream_buffer):
+                _log_event("stream_cut", {
+                    "session_id": session_id,
+                    "reason": "sensitive_term_match",
+                })
+                response_text += "\n[Respuesta bloqueada por seguridad]\n"
+                yield emit("model_token", {
+                    "delta": json.dumps({"delta": "\n[Respuesta bloqueada por seguridad]\n"})
+                })
+                break
+            yield emit("model_token", {
+                "delta": json.dumps({"delta": token})
+            })
+    except Exception:
+        err = "\n[Error al contactar el modelo]\n"
+        response_text += err
+        yield emit("model_token", {
+            "delta": json.dumps({"delta": err})
+        })
+
+\end{lstlisting}
+
+\subsection{Logs}
+
+Las decisiones de routing se registran en \texttt{logs/logs.jsonl} en formato JSONL (lista json de eventos) incluyendo tipo de evento, marca temporal y metadatos de sesión). Este log permite auditar la clasificación y asociarla a un \texttt{session\_id}. (AI Telemetry Logging, 
+ID: AML.M0024)
+
+\begin{lstlisting}[language=Python,caption={Registro de eventos de seguridad en JSONL},label={lst:security-log-function}]
+def _log_event(log_type: str, payload: dict):
+    lg_dir = "logs"
+    os.makedirs(lg_dir, exist_ok=True)
+    path = os.path.join(lg_dir, "logs.jsonl")
+
+    record = {
+        "type": log_type,
+        "timestamp": time.time(),
+        **payload,
+    }
+
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={Registro de clasificación y corte de streaming},label={lst:security-log-usage}]
+        if "classification" in update:
+            cl = update["classification"].get("route")
+            yield emit("classification", {"value": cl})
+            _log_event("classification", {
+                "session_id": session_id,
+                "route": cl,
+                "prompt": prompt,
+            })
+
+        ...
+
+            if _stream_contains_sensitive(stream_buffer):
+                _log_event("stream_cut", {
+                    "session_id": session_id,
+                    "reason": "sensitive_term_match",
+                })
+                response_text += "\n[Respuesta bloqueada por seguridad]\n"
+                yield emit("model_token", {
+                    "delta": json.dumps({"delta": "\n[Respuesta bloqueada por seguridad]\n"})
+                })
+                break
+\end{lstlisting}
+
+\section{Resultados}
+
+Se observa una mejora significativa en la detección de inyecciones, incluso con el modelo más pequeño y problemático (\texttt{llama3.1:8b}). Los modelos más grandes consiguen pasar todos los tests, como \texttt{qwen3-coder-30b}.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{Imagenes/safety_matrix_control.png}
+    \caption{Matriz con los controles aplicados.}
+    \label{fig:safety-matrix-control}
+\end{figure}
+
+\section{Controles organizativos}
+Además de los controles técnicos, se proponen los siguientes controles organizativos:
+
+\begin{itemize}
+    \item \textbf{Política de uso responsable}: definición de casos permitidos, prohibidos y criterios de riesgo, incluyendo requisitos de aprobación para usos sensibles y límites de alcance para agentes. Esto ayuda a estandarizar el comportamiento esperado y a evitar usos no autorizados. (Generative AI Guidelines, ID: AML.M0021)
+    \item \textbf{Clasificación de información}: etiquetado de datos sensibles, definición de niveles de confidencialidad y reglas de acceso en prompts, herramientas y fuentes RAG. Se recomienda limitar la exposición pública de información técnica y operativa cuando no sea imprescindible. (Limit Public Release of Information, ID: AML.M0000)
+    \item \textbf{Formación y concienciación}: capacitación de usuarios y equipos técnicos para detectar inyecciones, ingeniería social y uso inseguro de herramientas, con guías prácticas y simulaciones periódicas. (User Training, ID: AML.M0018)
+    \item \textbf{Gobernanza y auditoría}: revisión periódica de prompts, herramientas, logs y resultados de pruebas; además, mantener trazabilidad de artefactos y cambios de configuración para facilitar auditoría y respuesta a incidentes. (AI Telemetry Logging, ID: AML.M0024; AI Bill of Materials, ID: AML.M0023)
+\end{itemize}
+\begin{figure}[H]
+    \label{fig:page_future}
+\end{figure}
+\section{Limitaciones conocidas de los controles propuestos}
+
+Aunque los controles anteriores reducen significativamente el riesgo, no eliminan por completo la posibilidad de ataque. En particular, se identifican las siguientes limitaciones:
+
+\begin{itemize}
+    \item \textbf{Filtro léxico vulnerable a evasión}: la detección por palabras clave puede ser evitada mediante ofuscación (sinónimos, codificación, separadores, homoglifos Unicode o fragmentación semántica). Esto genera \emph{falsos negativos}.
+    \item \textbf{Impacto en usabilidad y precisión}: los filtros estrictos y el corte de streaming pueden bloquear consultas legítimas que incluyen términos sensibles en contextos permitidos (docencia, pruebas o auditoría), produciendo \emph{falsos positivos} y respuestas incompletas.
+    \item \textbf{Control de streaming basado en patrones}: el bloqueo en tiempo real depende de coincidencias locales en una ventana limitada. Exfiltraciones fragmentadas o reformuladas pueden no activar el corte.
+    \item \textbf{Coste operativo y latencia}: cada capa adicional (clasificación, validación y monitorización de salida) incrementa latencia y complejidad de mantenimiento, especialmente en despliegues con alta concurrencia.
+    \item \textbf{Logs no equivalen a prevención}: el registro de eventos mejora trazabilidad y auditoría, pero su efectividad depende de revisión activa, políticas de retención y protección de los propios logs frente a acceso no autorizado.
+\end{itemize}
+Por lo tanto el uso de estos controles debe complementarse con evaluaciones periódicas, pruebas de evasión continuas y supervisión humana en escenarios de alto impacto.

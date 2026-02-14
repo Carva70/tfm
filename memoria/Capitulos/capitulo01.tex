@@ -1,0 +1,20 @@
+\chapter{Introducción y Objetivos}
+
+Desde la aparición de los modelos de lenguaje, se ha buscado su uso en entornos corporativos para tareas de automatización, consulta, asistencia, etc. La consecuencia de esto es que muchos de estos modelos tienen acceso a información crítica de la organización, como bases de datos o servicios, lo que permite a los atacantes buscar formas de que este modelo falle y acceda a información confidencial, ya sea obteniéndola o modificándola.
+
+Este trabajo propone un entorno controlado que simula un caso corporativo con datos de clientes y un orquestador que controla el flujo de peticiones al modelo de lenguaje. El objetivo es simular ataques al modelo y proponer mitigaciones.
+
+\section{Objetivos principales}
+
+\begin{itemize}
+    \item Diseñar y evaluar un entorno controlado para estudiar vulnerabilidades de prompt injection en LLMs usados en contextos corporativos y validar mitigaciones.
+\end{itemize}
+
+\section{Objetivos específicos}
+
+\begin{itemize}
+    \item Modelar un escenario con datos estructurados y un flujo de orquestación LLM que represente riesgos reales de acceso a información sensible
+    \item Ejecutar casos de ataque (intentos de exfiltración) y observar el comportamiento del sistema
+    \item Diseñar controles y evaluar su eficacia frente a los ataques definidos
+    \item Establecer recomendaciones de buenas prácticas para reducir la exposición al prompt injection en despliegues corporativos
+\end{itemize}

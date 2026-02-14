@@ -1,0 +1,59 @@
+\documentclass{MUXLaTeX} % Versión 1.0.1 - Pruebas Beta - Pascal 2024
+\usepackage[utf8]{inputenc}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usepackage{svg}
+\usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
+\lstdefinestyle{tfmcode}{
+	basicstyle=\ttfamily\footnotesize,
+	numbers=left,
+	numberstyle=\tiny,
+	numbersep=6pt,
+	frame=single,
+	framerule=0.4pt,
+	rulecolor=\color{gray!40},
+	tabsize=4,
+	showstringspaces=false,
+	breaklines=true,
+	breakatwhitespace=true,
+	captionpos=b,
+	keywordstyle=\color{blue!60!black},
+	stringstyle=\color{green!40!black},
+	commentstyle=\color{gray!70!black}
+}
+\lstset{style=tfmcode}
+
+\begin{document}
+%%%%%%%%%%%%%%%% Elegir si / no (Minúsculas)
+\bajavision{no} % no disponible en versión 1.0.1
+\digital{no}
+\abstract{si}
+\indicetablas{si}
+\indicefiguras{si}
+
+%%%%%%%%%%%% PORTADA, ÍNDICE, RESUMEN
+\maquetacion
+{Prompt Injection en entornos corporativos: evaluación, diseño y mitigación de ataques} % TITULO
+{\autoria{Ignacio Carvajal García}{no}} % AUTORÍA
+{\direccion{""}{no}{no}} % DIRIGIDO POR
+
+%%%%%%%%%%%% CAPÍTULOS
+
+\input{Capitulos/capitulo01.tex}
+\input{Capitulos/capitulo02.tex}
+\input{Capitulos/capitulo03.tex}
+\input{Capitulos/capitulo04.tex}
+\input{Capitulos/capitulo05.tex}
+\input{Capitulos/capitulo06.tex}
+\input{Capitulos/capitulo07.tex}
+
+\appendix
+\input{Anexos/codigos.tex}
+
+%%%%%%%%%%%% BIBLIOGRAFÍA AUTOMÁTICA
+\bibliografia
+\end{document}

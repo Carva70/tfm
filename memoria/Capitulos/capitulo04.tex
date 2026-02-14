@@ -1,0 +1,92 @@
+\chapter{Diseño del entorno}
+
+\section{Arquitectura general}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Imagenes/arquitectura_general.drawio.pdf}
+    \caption{Arquitectura general}
+    \label{fig:arquitectura-general}
+\end{figure}
+
+El entorno se compone de:
+\begin{itemize}
+	\item \textbf{VMware} (máquina principal)
+    \begin{itemize}
+    	\item \textbf{Base de datos}: SQLite con un esquema CRM y datos sintéticos (Faker).
+    	\item \textbf{Frontend}: cliente React+Vite que muestra el flujo de eventos del backend.
+        \item \textbf{Orquestación}: servicio FastAPI que expone un endpoint de streaming y ejecuta el grafo principal (LangGraph) \ref{fig:orchestrator-graph}.
+        \item \textbf{Tests}: intentan conseguir datos confidenciales mediante prompt injection.
+    \end{itemize}
+    \item \textbf{LLM local}: integración con Ollama, puede estar en la máquina principal o en remoto.
+\end{itemize}
+
+
+
+
+
+
+
+\section{Orquestación con LangGraph}
+El grafo de estados define el flujo de ejecución dependiendo de la clasificación. Se compone de nodos de clasificación, esquema de base de datos, generación SQL, ejecución y respuesta final, más un nodo de error para peticiones maliciosas.
+
+El grafo conecta los nodos y las transiciones condicionales en función de la clasificación, asegurando que solo se genere SQL cuando la petición lo requiere (Anexo~\ref{lst:graph-definition})
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+\vspace{0pt}
+\includegraphics[width=\textwidth]{Imagenes/graph.png}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\vspace{0pt}
+\paragraph{Descripción de nodos.}
+\begin{itemize}
+	\item \textbf{classification}: clasifica la petición en una ruta (\texttt{simple\_request}, \texttt{needs\_db\_access} o \texttt{malicious\_request}) (código~\ref{lst:classify-node}, sistema~\ref{lst:system-routing}).
+	\item \textbf{db\_schema}: extrae el esquema de SQLite y lo prepara como contexto para SQL (codigo~\ref{lst:db-schema-extract}).
+	\item \textbf{sql\_query}: genera una única sentencia SQL a partir del prompt y el esquema (sistema~\ref{lst:sql-generation}, prompt~\ref{lst:sql-generation-full}).
+	\item \textbf{query\_results}: ejecuta la SQL y serializa los resultados (código~\ref{lst:exec-sql-node}).
+	\item \textbf{finalize}: respuesta final (sistema~\ref{lst:system-final-response}, prompt~\ref{lst:final-prompt}).
+	\item \textbf{error\_node}: ruta de bloqueo para peticiones maliciosas con respuesta controlada.
+	\item \textbf{start,end}: nodos de inicio y fin del grafo.
+\end{itemize}
+\end{minipage}
+\caption{Grafo de orquestación y rutas de ejecución.}
+\label{fig:orchestrator-graph}
+\end{figure}
+
+
+El front se conecta a la API del orquestador, que a su vez se conecta con el endpoint de Ollama. Los nodos intermedios se realizan con peticiones sin streaming (creación de sentencias SQL, clasificación); la respuesta final se devuelve como un flujo de \texttt{text/event-stream} para que se vaya escribiendo de token a token en el front. (Anexo~\ref{lst:ollama-stream}) Además del streaming de tokens, el SSE incluye eventos de depuración (clasificación, SQL y resultados) que el frontend puede mostrar.
+
+El cliente del modelo se crea con temperatura 0 para que los resultados sean deterministas (todos los tests den el mismo resultado siempre). (Anexo~\ref{lst:ollama-client}).
+
+
+
+\section{Prompts y reglas de seguridad}
+
+\subsection{Clasificación}
+El primer nodo clasifica la información del prompt en 3:
+
+\begin{enumerate}
+    \item \texttt{simple\_request}: No requiere de acceso a base de datos y no es una entrada maliciosa.
+
+    \item \texttt{needs\_db\_access}: Requiere de acceso a la base de datos y no es una entrada maliciosa
+
+    \item \texttt{malicious\_request}: Entrada que busca que el modelo devuelva datos sensibles de la base de datos. (tabla \texttt{clients\_pii}
+\end{enumerate}
+
+El esquema del mensaje de sistema principal \ref{lst:system-routing} sigue el modelo de \texttt{gpt-oss} \cite{openai_safeguards} con instrucciones adicionales para evitar diferentes inyecciones.
+
+\subsection{Consultas SQL y respuesta final}
+La generación SQL queda delimitada con etiquetas y el prompt de generación SQL especifica límites estrictos: una sola sentencia, sin comentarios, y usando únicamente el esquema entregado, lo que reduce desviaciones y errores de ejecución (Anexo~\ref{lst:sql-generation}). \footnote{Esta restricción es una instrucción de mensaje de sistema y no una validación técnica adicional.}
+
+El prompt final delimita claramente el contexto (esquema, SQL y resultados) y obliga a responder exclusivamente con esa información para minimizar alucinaciones (Anexo~\ref{lst:final-prompt}). \footnotemark[1]
+
+\section{Base de datos y datos sintéticos}
+La base de datos se implementa en SQLite (\texttt{clients.db}) y se crea con \texttt{create\_db.py}, que define un esquema CRM con tablas de usuarios, clientes, contactos, direcciones, proyectos, facturas, pagos, interacciones y auditoría, separando la PII en \texttt{client\_pii}.
+
+Los datos se rellenan en \texttt{populate\_db.py} usando Faker.
+
+\section{Frontend React + Vite}
+El cliente React implementa un chat en tiempo real con streaming de tokens y mensajes de sistema que muestran la clasificación y la consulta SQL generada.
