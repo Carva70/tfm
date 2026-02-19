@@ -3,7 +3,7 @@
 \section{Controles técnicos}
 \subsection{Filtro por palabras clave}
 
-En la propia clasificación, existe un filtro que bloquea los prompts que contienen indicativos de instrucciones maliciosas (cualquier término sensible como IBAN, tarjetas, clients\_pii, información personal, etc.). Se ejecutaría antes de la clasificación, reduciendo el riesgo de inyecciones que intentan forzar la ruta a la base de datos. La implementación consiste en convertir el prompt en minúsculas y comprobar coincidencias con términos sensibles; y devolver \texttt{malicious\_request} como clasificación del nodo. (Generative AI Guardrails, AML.M0020; Adversarial Input Detection, AML.M0015; Restrict AI Agent Tool Invocation on Untrusted Data, AML.M0030)
+En la propia clasificación, existe un filtro que bloquea los prompts que contienen indicativos de instrucciones maliciosas (cualquier término sensible como IBAN, tarjetas, clients\_pii, información personal, etc.). Se ejecutaría antes de la clasificación, reduciendo el riesgo de inyecciones que intentan forzar la ruta a la base de datos. La implementación consiste en convertir el prompt en minúsculas y comprobar coincidencias con términos sensibles; y devolver \texttt{malicious\_request} como clasificación del nodo. (Generative AI Guardrails, AML.M0020; Input and Output Validation for AI Agent Components, AML.M0033; Restrict AI Agent Tool Invocation on Untrusted Data, AML.M0030)
 
 \begin{lstlisting}[language=Python,caption={Nodo de clasificación con salida segura},label={lst:classify-node-filter}]
 async def classify_node(state: OrchestrationState) -> dict[str, Any]:
@@ -94,7 +94,7 @@ async def orchestrated_stream(payload):
 
 Las decisiones de routing se registran en \texttt{logs/logs.jsonl} en formato JSONL (lista json de eventos) incluyendo tipo de evento, marca temporal y metadatos de sesión). Este log permite auditar la clasificación y asociarla a un \texttt{session\_id}. (AI Telemetry Logging, 
 ID: AML.M0024)
-
+\newpage
 \begin{lstlisting}[language=Python,caption={Registro de eventos de seguridad en JSONL},label={lst:security-log-function}]
 def _log_event(log_type: str, payload: dict):
     lg_dir = "logs"
@@ -152,14 +152,20 @@ Además de los controles técnicos, se proponen los siguientes controles organiz
 
 \begin{itemize}
     \item \textbf{Política de uso responsable}: definición de casos permitidos, prohibidos y criterios de riesgo, incluyendo requisitos de aprobación para usos sensibles y límites de alcance para agentes. Esto ayuda a estandarizar el comportamiento esperado y a evitar usos no autorizados. (Generative AI Guidelines, ID: AML.M0021)
-    \item \textbf{Clasificación de información}: etiquetado de datos sensibles, definición de niveles de confidencialidad y reglas de acceso en prompts, herramientas y fuentes RAG. Se recomienda limitar la exposición pública de información técnica y operativa cuando no sea imprescindible. (Limit Public Release of Information, ID: AML.M0000)
-    \item \textbf{Formación y concienciación}: capacitación de usuarios y equipos técnicos para detectar inyecciones, ingeniería social y uso inseguro de herramientas, con guías prácticas y simulaciones periódicas. (User Training, ID: AML.M0018)
+    \item \textbf{Evitar exposición de información técnica}: Se recomienda limitar la exposición pública de información técnica y operativa cuando no sea imprescindible. (Limit Public Release of Information, ID: AML.M0000)
+    \item \textbf{Concienciación}: capacitación de usuarios y equipos técnicos para detectar inyecciones, ingeniería social y uso inseguro de herramientas, con guías prácticas y simulaciones periódicas. (User Training, ID: AML.M0018)
     \item \textbf{Gobernanza y auditoría}: revisión periódica de prompts, herramientas, logs y resultados de pruebas; además, mantener trazabilidad de artefactos y cambios de configuración para facilitar auditoría y respuesta a incidentes. (AI Telemetry Logging, ID: AML.M0024; AI Bill of Materials, ID: AML.M0023)
+
+    \item \textbf{Human In-the-Loop}: Los sistemas deben exigir que el usuario apruebe las acciones del agente antes de que este las lleve a cabo. Existen herramientas independientes, como agentes de auditoría dedicados, que pueden ayudar en la aprobación humana, pero la decisión final debe recaer en un responsable humano. (Human In-the-Loop for AI Agent Actions, ID: AML.M0029)
+\newpage
 \end{itemize}
 \begin{figure}[H]
     \label{fig:page_future}
 \end{figure}
-\section{Limitaciones conocidas de los controles propuestos}
+
+
+
+\section{Limitaciones conocidas de los controles propuestos}\label{sec:limitaciones-controles}
 
 Aunque los controles anteriores reducen significativamente el riesgo, no eliminan por completo la posibilidad de ataque. En particular, se identifican las siguientes limitaciones:
 
@@ -171,3 +177,5 @@ Aunque los controles anteriores reducen significativamente el riesgo, no elimina
     \item \textbf{Logs no equivalen a prevención}: el registro de eventos mejora trazabilidad y auditoría, pero su efectividad depende de revisión activa, políticas de retención y protección de los propios logs frente a acceso no autorizado.
 \end{itemize}
 Por lo tanto el uso de estos controles debe complementarse con evaluaciones periódicas, pruebas de evasión continuas y supervisión humana en escenarios de alto impacto.
+
+

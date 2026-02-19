@@ -4,7 +4,7 @@ En aplicaciones y programas tradicionales, hay una diferenciación entre código
 
 Un LLM no razona ni entiende las instrucciones escritas, sino que es un modelo estadístico que predice el siguiente token a partir del contexto \cite{ibm_llm_security}. Por ello la forma de atacar a estos sistemas es introduciendo instrucciones maliciosas (en lenguaje natural) dentro del contexto con el objetivo de alterar su comportamiento. Este ataque puede ser de forma directa o indirecta:
 
-Se considera ataque por \textbf{inyección directa} cuando el adversario interactúa con el LLM e intenta inducir respuestas que normalmente estarían restringidas (jailbreaking). \cite{benjamin2024systematically} En la \textbf{inyección indirecta}, el contenido malicioso se introduce en fuentes externas que el sistema consume (web, documentos, repositorios, etc.) y el modelo lo interpreta como instrucciones, a menudo sin que el usuario lo advierta \cite{gulyamov2026promptinjection,greshake2023indirectpromptinjection}.
+Se considera ataque por \textbf{inyección directa} cuando el adversario interactúa con el LLM e intenta inducir respuestas que normalmente estarían restringidas (jailbreaking) \cite{benjamin2024systematically}. En la \textbf{inyección indirecta}, el contenido malicioso se introduce en fuentes externas que el sistema consume (web, documentos, repositorios, etc.) y el modelo lo interpreta como instrucciones, a menudo sin que el usuario lo advierta \cite{gulyamov2026promptinjection,greshake2023indirectpromptinjection}.
 
 Según un estudio de la Unión Europea \cite{greshake2023indirectpromptinjection} los ataques a modelos de lenguaje siguen la siguiente taxonomía:
 

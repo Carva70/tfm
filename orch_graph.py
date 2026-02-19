@@ -53,7 +53,6 @@ async def classify_node(state: OrchestrationState) -> dict[str, Any]:
     payload = state.get("payload", {}) or {}
     model_name = payload.get("classification_model") or payload.get("model")
 
-
     if any(keyword in prompt_l for keyword in SENSITIVE_KEYWORDS):
         _log_event("sensitive_info_detected", {"prompt": prompt})
         return {"route": "malicious_request"}

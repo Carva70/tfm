@@ -35,7 +35,13 @@ export function useChatStream() {
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState("");
 
-  const sendMessage = async ({ classificationModel, generationModel } = {}) => {
+  const sendMessage = async ({
+    classificationModel,
+    generationModel,
+    showClassification = true,
+    showSqlQuery = true,
+    showQueryResults = true,
+  } = {}) => {
     if (!input.trim()) return;
 
     const selectedGenerationModel = (generationModel || "").trim() || DEFAULT_MODEL;
@@ -119,6 +125,7 @@ export function useChatStream() {
 
 
         } else if (json.type === "classification") {
+          if (!showClassification) continue;
           setMessages(prev => {
             const updated = [...prev];
             updated.splice(updated.length - 1, 0, {
@@ -129,6 +136,7 @@ export function useChatStream() {
             return updated;
           });
         } else if (json.type === "sql_query") {
+          if (!showSqlQuery) continue;
           setMessages(prev => {
             const updated = [...prev];
             updated.splice(updated.length - 1, 0, {
@@ -139,6 +147,7 @@ export function useChatStream() {
             return updated;
           });
         } else if (json.type === "query_results") {
+          if (!showQueryResults) continue;
           
           let table_md = ""; 
 

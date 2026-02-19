@@ -144,7 +144,7 @@ async def stream_from_ollama(payload, conv: list[dict]):
 
 @tool("classify_request")
 async def classify_request_tool(prompt: str, model: str | None = None) -> str:
-    """clasificacion de la ruta"""
+    """clasificacion"""
     model_name = model or CLASSIFICATION_MODEL
     try:
         await ensure_ollama_model(model_name)

@@ -3,7 +3,7 @@
 \section{Conclusiones}
 
 \begin{itemize}
-    \item Se ha implementado un entorno que reproduce un flujo de mensajes entre el modelo, el usuario y la base de datos, mediante un árbol de orquestación que facilita la trazabilidad al registrar decisiones de clasificación en el log de seguridad.
+    \item Se ha implementado un entorno que reproduce un flujo de mensajes entre el modelo, el usuario y la base de datos, mediante un flujo de orquestación que facilita la trazabilidad al registrar decisiones de clasificación en el log de seguridad.
 
     \item En las pruebas, se ha comprobado que los modelo pequeños presentan más problemas en las tareas de clasificación, mientras que modelos mas grandes y dedicados enrutan de forma más segura, aunque sigan teniendo fallos. Se comprueba que el tamaño y tipo de modelo influye en la capacidad de seguir políticas de seguridad.
 
@@ -12,10 +12,21 @@
     \item Los tests sirven como base reproducible para la evaluación de modelos y validar controles dedicados al prompt injection.
 \end{itemize}
 
+
+
+\section{Recomendaciones}
+
+Los resultados obtenidos en el capítulo anterior (Figura~\ref{fig:safety-matrix-control}) evidencian que la combinación de controles reduce significativamente la exposición a inyecciones, incluso en modelos pequeños. Sin embargo, debido a la falta de fiabilidad de los modelos, se recomienda limitar el uso de modelos de lenguaje en procesos que involucren información sensible. Pero en el caso de usarlos, se recomienda:
+
+\begin{itemize}
+    \item Incorporar supervisión humana para la aprobación de acciones de alto impacto ejecutadas por el agente.
+    \item Establecer una revisión periódica de los logs de seguridad como parte de las tareas de monitorización y auditoría continua.
+\end{itemize}
+
 \section{Trabajo futuro}
 
 \begin{itemize}
-    \item Implementar tests que exploten las limitaciones descritas en la página \pageref{fig:page_future}.
+    \item Implementar tests que exploten las limitaciones descritas en la Sección~\ref{sec:limitaciones-controles}.
     \item Analizar entornos con Deep Agents, sistemas mucho más complejos con múltiples agenetes y pasos dinámicos. Entornos mucho más complejos y difíciles de controlar.
     \item Usar entornos cloud y APIs de pago para la evaluación de modelos más grandes.
 \end{itemize}

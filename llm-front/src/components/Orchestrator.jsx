@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, TextField, Button, Paper, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, TextField, Button, Paper, FormControl, InputLabel, Select, MenuItem, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
@@ -24,6 +24,9 @@ export default function Orchestrator() {
 
   const [generationModel, setGenerationModel] = useState(modelOptions[0]);
   const [classificationModel, setClassificationModel] = useState(modelOptions[0]);
+  const [showClassification, setShowClassification] = useState(true);
+  const [showSqlQuery, setShowSqlQuery] = useState(true);
+  const [showQueryResults, setShowQueryResults] = useState(true);
 
   const {
     messages,
@@ -99,6 +102,42 @@ export default function Orchestrator() {
         </FormControl>
       </Box>
 
+      <FormGroup row sx={{ mb: 1 }}>
+        <FormControlLabel
+          sx={{ "& .MuiFormControlLabel-label": { color: "black" } }}
+          control={
+            <Checkbox
+              size="small"
+              checked={showClassification}
+              onChange={(e) => setShowClassification(e.target.checked)}
+            />
+          }
+          label="Mostrar clasificación"
+        />
+        <FormControlLabel
+          sx={{ "& .MuiFormControlLabel-label": { color: "black" } }}
+          control={
+            <Checkbox
+              size="small"
+              checked={showSqlQuery}
+              onChange={(e) => setShowSqlQuery(e.target.checked)}
+            />
+          }
+          label="Mostrar SQL"
+        />
+        <FormControlLabel
+          sx={{ "& .MuiFormControlLabel-label": { color: "black" } }}
+          control={
+            <Checkbox
+              size="small"
+              checked={showQueryResults}
+              onChange={(e) => setShowQueryResults(e.target.checked)}
+            />
+          }
+          label="Mostrar resultados"
+        />
+      </FormGroup>
+
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField
           fullWidth
@@ -111,6 +150,9 @@ export default function Orchestrator() {
             sendMessage({
               classificationModel,
               generationModel,
+              showClassification,
+              showSqlQuery,
+              showQueryResults,
             })
           }
           placeholder="Type a message..."
@@ -121,6 +163,9 @@ export default function Orchestrator() {
             sendMessage({
               classificationModel,
               generationModel,
+              showClassification,
+              showSqlQuery,
+              showQueryResults,
             })
           }
         >
