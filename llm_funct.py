@@ -12,15 +12,12 @@ from prompts import prompts, system_messages
 load_dotenv()
 
 #cambiar el .env
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
-DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "qooba/qwen3-coder-30b-a3b-instruct:q3_k_m")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "llama3.1:8b")
 CLASSIFICATION_MODEL = os.getenv("CLASSIFICATION_MODEL", DEFAULT_MODEL)
 OLLAMA_AUTO_PULL = os.getenv("OLLAMA_AUTO_PULL", "false").lower() in {"1", "true", "yes"}
 
 _READY_MODELS: set[str] = set()
-
-print(OLLAMA_BASE_URL, DEFAULT_MODEL)
-
 
 def _extract_model_names(tags_resp: Any) -> list[str]:
     models = []

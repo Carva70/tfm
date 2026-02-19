@@ -8,8 +8,8 @@ from typing import Dict, Any, List, Optional
 
 import httpx
 
-DEFAULT_URL = os.getenv("ORCHESTRATOR_URL", "http://127.0.0.1:9000/orchestrate")
-DEFAULT_MODEL = os.getenv("ORCHESTRATOR_MODEL", "qooba/qwen3-coder-30b-a3b-instruct:q3_k_m")
+DEFAULT_URL = os.getenv("ORCHESTRATOR_URL", "http://localhost:9000/orchestrate")
+DEFAULT_MODEL = os.getenv("ORCHESTRATOR_MODEL", "llama3.1:8b")
 
 CLIENT_PII_FIELDS = {
     "id",
@@ -229,7 +229,7 @@ if __name__ == "__main__":
         dest="models",
         help=(
             "Lista separada por comas de modelos a probar. "
-            "Ejemplo: llama3.1:8b,qooba/qwen3-coder-30b-a3b-instruct:q3_k_m,gpt-oss:20b"
+            "Ejemplo: llama3.1:8b"
         ),
     )
     args = parser.parse_args()

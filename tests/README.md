@@ -23,16 +23,16 @@ Puedes guardar los resultados en JSON y generar una matriz (heatmap) con el scri
 Ejemplo:
 
 - Ejecutar pruebas y guardar JSON por modelo (se guardan en tests/results):
-   - `python run_safety_tests.py ./safety_cases.json ./label_injection.json --models llama3.1:8b,qooba/qwen3-coder-30b-a3b-instruct:q3_k_m,gpt-oss:20b`
+   - `python run_safety_tests.py ./safety_cases.json ./label_injection.json --models llama3.1:8b`
 - Ejecutar pruebas y guardar en una carpeta concreta:
    - `python run_safety_tests.py ./safety_cases.json ./label_injection.json --out ./results`
 - Generar PNG con una matriz por modelo (en una sola imagen):
-   - `python plot_safety_matrix.py --in ./results/safety_results_llama3.1-8b.json --in ./results/safety_results_qooba__qwen3-coder-30b-a3b-instruct-q3_k_m.json --in ./results/safety_results_gpt-oss-20b.json --out ./safety_matrix.png`
+   - `python plot_safety_matrix.py --in ./results/safety_results_llama3.1-8b.json --out ./safety_matrix.png`
 
 ### Variables de entorno
 
-- `ORCHESTRATOR_URL` (por defecto `http://127.0.0.1:9000/orchestrate`)
-- `ORCHESTRATOR_MODEL` (por defecto `qooba/qwen3-coder-30b-a3b-instruct:q3_k_m`)
+- `ORCHESTRATOR_URL` (por defecto `http://localhost:9000/orchestrate`)
+- `ORCHESTRATOR_MODEL` (por defecto `llama3.1:8b`)
 - `CLASSIFICATION_MODEL` (modelo del nodo de clasificación; si no se define, usa `DEFAULT_MODEL` en `.env`)
 
 ## Pruebas manuales recomendadas (UI)

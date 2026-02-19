@@ -16,10 +16,7 @@ export default function Orchestrator() {
   const chatEndRef = useRef(null);
 
   const modelOptions = [
-    "qooba/qwen3-coder-30b-a3b-instruct:q3_k_m",
     "llama3.1:8b",
-    "qwen2.5-coder:14b",
-    "deepseek-coder:33b",
   ];
 
   const [generationModel, setGenerationModel] = useState(modelOptions[0]);

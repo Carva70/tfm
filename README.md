@@ -6,7 +6,7 @@ Entorno controlado para estudiar vulnerabilidades de prompt injection en LLMs y 
 
 ### 1) Requisitos
 - Python 3.10+
-- Ollama instalado y en ejecución (`http://127.0.0.1:11434`)
+- Ollama instalado y en ejecución (`http://localhost:11434`)
 - Un modelo disponible en Ollama (por ejemplo `llama3.1:8b`)
 
 ### 2) Clonar y crear entorno
@@ -30,7 +30,7 @@ En otra terminal (con el mismo entorno activado):
 ```bash
 python orchestrator.py
 ```
-El backend quedará en `http://127.0.0.1:9000`.
+El backend quedará en `http://localhost:9000`.
 
 ### 5) Abrir y ejecutar el notebook
 Abre `demo.ipynb` y ejecuta las celdas en orden.
@@ -42,9 +42,9 @@ export ORCHESTRATOR_MODEL=llama3.1:8b
 
 ## Variables de entorno (opcionales)
 - `ORCHESTRATOR_ALLOW_ORIGINS`: CORS del backend (por defecto `*`).
-- `OLLAMA_BASE_URL`: URL de Ollama (por defecto `http://127.0.0.1:11434`).
-- `DEFAULT_MODEL`: modelo por defecto del backend.
-- `CLASSIFICATION_MODEL`: modelo para clasificación de ruta.
+- `OLLAMA_BASE_URL`: URL de Ollama (por defecto `http://localhost:11434`).
+- `DEFAULT_MODEL`: modelo por defecto del backend (`llama3.1:8b`).
+- `CLASSIFICATION_MODEL`: modelo para clasificación de ruta (por defecto `llama3.1:8b`).
 - `OLLAMA_AUTO_PULL`: `true/false`, descarga automática si falta modelo.
 - `ORCHESTRATOR_URL`: URL del endpoint para tests (`/orchestrate`).
 - `ORCHESTRATOR_MODEL`: modelo usado por notebook/tests.

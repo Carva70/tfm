@@ -27,7 +27,7 @@ export function to_markdown_table(results_str) {
   return table_md;
 }
 
-const DEFAULT_MODEL = "qooba/qwen3-coder-30b-a3b-instruct:q3_k_m";
+const DEFAULT_MODEL = "llama3.1:8b";
 
 export function useChatStream() {
   
@@ -50,7 +50,7 @@ export function useChatStream() {
     setMessages(prev => [...prev, { sender: "user", text: input }]);
     setMessages(prev => [...prev, { sender: "bot", text: "" }]);
 
-    const response = await fetch("http://192.168.1.120:9000/orchestrate", {
+    const response = await fetch("http://localhost:9000/orchestrate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
