@@ -11,7 +11,7 @@ __pycache__/
 .pytest_cache/
 
 # Variables de entorno locales
-.env
+#.env
 
 # Base de datos y artefactos generados
 *.db

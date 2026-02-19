@@ -4,14 +4,45 @@ Entorno controlado para estudiar vulnerabilidades de prompt injection en LLMs y 
 
 ## Ejecutar `demo.ipynb` desde cero (tras clonar)
 
+## Configuración recomendada (para todo)
+Se recomienda usar modelos instruct grandes como `qooba/qwen3-coder-30b-a3b-instruct:q3_k_m` en todo el flujo:
+
+```bash
+export CLASSIFICATION_MODEL="qooba/qwen3-coder-30b-a3b-instruct:q3_k_m"
+export ORCHESTRATOR_MODEL="qooba/qwen3-coder-30b-a3b-instruct:q3_k_m"
+```
+
 ### 1) Requisitos
-- Python 3.10+
-- Ollama instalado y en ejecución (`http://localhost:11434`)
-- Un modelo disponible en Ollama (por ejemplo `llama3.1:8b`)
+
+### Instalar Ollama en Linux (rápido, por comandos)
+Comandos oficiales recomendados:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Iniciar el servicio y comprobar que está activo:
+
+```bash
+sudo systemctl start ollama
+sudo systemctl status ollama
+ollama -v
+```
+
+Descargar un modelo de ejemplo para validar:
+
+```bash
+ollama pull qooba/qwen3-coder-30b-a3b-instruct:q3_k_m
+```
+
+Fuentes oficiales:
+- https://ollama.com/download/linux
+- https://docs.ollama.com/linux
+
 
 ### 2) Clonar y crear entorno
 ```bash
-git clone <URL_DEL_REPO>
+git clone https://github.com/Carva70/tfm
 cd tfm
 python3 -m venv .venv
 source .venv/bin/activate

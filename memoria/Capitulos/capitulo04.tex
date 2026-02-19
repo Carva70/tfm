@@ -1,7 +1,7 @@
 \chapter{Diseño del entorno}
 
 \section{Arquitectura general}
-
+El sistema se compone de una máquina principal que ejecuta el backend, la base de datos y el frontend; y un LLM local (Ollama) que puede estar en la misma máquina o en remoto. El backend se encarga de orquestar el flujo de ejecución mediante un grafo de estados (LangGraph) que clasifica las peticiones, genera SQL cuando es necesario, ejecuta las consultas y devuelve la respuesta final al frontend. El frontend muestra el flujo de eventos en tiempo real, incluyendo la clasificación y la consulta SQL generada.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Imagenes/arquitectura_general.drawio.pdf}
@@ -9,7 +9,7 @@
     \label{fig:arquitectura-general}
 \end{figure}
 
-El entorno se compone de:
+Las tecnologías utilizadas son:
 \begin{itemize}
 	\item \textbf{VMware} (máquina principal)
     \begin{itemize}
@@ -89,4 +89,13 @@ La base de datos se implementa en SQLite (\texttt{clients.db}) y se crea con \te
 Los datos se rellenan en \texttt{populate\_db.py} usando Faker.
 
 \section{Frontend React + Vite}
-El cliente React implementa un chat en tiempo real con streaming de tokens y mensajes de sistema que muestran la clasificación y la consulta SQL generada.
+
+
+\begin{wrapfigure}{l}{0.3\linewidth}
+    \centering
+    \includegraphics[width=0.7\linewidth]{Imagenes/front.png}
+    \caption{Visualización del frontend}
+    \label{fig:front}
+\end{wrapfigure}
+
+Se implementa un cliente React que se conecta al endpoint de orquestación y muestra el flujo de eventos en tiempo real. El frontend muestra la clasificación, la consulta SQL generada, los resultados de ésta y la respuesta final del modelo, lo que permite observar el comportamiento del sistema ante diferentes inputs.

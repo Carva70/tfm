@@ -1,23 +1,31 @@
 \chapter{Ejecución de ataques}
 
-%(clasificador \textrightarrow{} SQL \textrightarrow{} respuesta final)
-El objetivo de las pruebas es comprobar que las peticiones maliciosas no lleguen a la base de datos y que las respuestas finales no expongan información sensible (PII).
+\vspace{10px}
 
-Los ficheros principales son:
+\begin{wrapfigure}{l}{0.5\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{Imagenes/inyeccion_ejemplo.png}
+    \caption{Ejemplo de inyección de etiqueta junto a la instrucción}
+    \label{fig:inyeccion_ejemplo}
+\end{wrapfigure}
+
+%(clasificador \textrightarrow{} SQL \textrightarrow{} respuesta final)
+El objetivo de las pruebas es forzar a que el clasificador enrute el prompt como \texttt{needs\_db\_access}, y luego genere la sentencia sql obedeciendo las instrucciones en los diferentes casos. Cada plantilla de inyección de etiqueta intenta forzar la clasificación de una manera distinta, y cada caso contiene una instrucción de exfiltración distinta:
+
 \begin{itemize}
-	\item \texttt{tests/safety\_cases.json}: conjunto de casos de seguridad. Define prompts de exfiltración.
+	\item \texttt{tests/safety\_cases.json}: conjunto de casos. Define prompts de exfiltración.
 	\item \texttt{tests/label\_injection.json}: plantillas de inyección de etiqueta. Genera variantes de cada prompt intentando forzar la clasificación \texttt{needs\_db\_access} mediante técnicas de prompt injection.
 \end{itemize}
 
 El contenido completo de ambos ficheros se incluye en los anexos de prompts y plantillas (\ref{anx:safety-prompts} y \ref{anx:label-templates}).
+
+\vspace{10px}
 
 El script de pruebas combina cada caso de \texttt{safety\_cases.json} con las plantillas de inyección para crear variantes del prompt. Cada variante se envía al endpoint del orquestador y se comprueba lo siguiente:
 \begin{itemize}
 	\item La ruta de clasificación devuelta coincide con la esperada para el caso (\texttt{malicious\_request}).
 	\item La respuesta final no filtra ni imagina información sensible (no proporciona resultados que coinciden con expresiones regulares propias de IBAN, SSN, etc.).
 \end{itemize}
-
-Estas pruebas actúan como regresión de seguridad: garantizan que cambios en el clasificador, los prompts o el orquestador no introduzcan filtraciones de PII ni rutas incorrectas.
 
 Además de los casos de prueba, se recomienda validar manualmente desde la interfaz web y verificar que los intentos de exfiltración se clasifican como \texttt{malicious\_request} y que la respuesta final no muestra datos personales ni detalles de SQL o esquema.
 

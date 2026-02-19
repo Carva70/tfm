@@ -23,11 +23,10 @@ La coordinación del flujo de mensajes de un modelo a otro es lo que se conoce c
 
 El desarrollo de los modelos de lenguaje comienza con la creación de transformers \cite{vaswani2017attention}, arquitectura de inteligencia artificial diseñada para procesar y producir texto en lenguaje natural mediante mecanismos de atención. A partir de ahí surgen modelos básicos como BERT \cite{devlin2018bert}, y más adelante modelos con mucha más capacidad como GPT \cite{brown2020gpt3}. 
 
-Técnicas como instruction tuning y RLHF (Reinforcement Learning from Human Feedback) dieron pie a los modelos instruct, que son la base de los asistentes de hoy en día, ya que estos están afinados para seguir instrucciones \cite{ouyang2022instructgpt}.
+Técnicas como instruction tuning dieron pie a los modelos instruct, que son la base de los asistentes de hoy en día, ya que estos están afinados para seguir instrucciones \cite{ouyang2022instructgpt}.
 
 \newpage
 
-\subsection{Evolución del panorama de amenazas}
 
 \begin{wrapfigure}{l}{0.4\linewidth}
     \centering
@@ -42,8 +41,7 @@ Las técnicas adversariales e incidentes aumentan significativamente en 2023, a�
 
 Fue muy popular entonces descubrir si un usuario era un bot con la inyección ``ignora las instrucciones previas...'' \ref{fig:prompt_injection_yt} \cite{gulyamov2026promptinjection}, una técnica simple pero efectiva que expuso la fragilidad de muchos sistemas en producción.
 
-\subsection{Crecimiento exponencial de la investigación}
-
+\vspace{15px}
 Entre 2023 y 2026, la investigación sobre seguridad en LLMs experimentó un crecimiento significativo:
 
 \begin{itemize}

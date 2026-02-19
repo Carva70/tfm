@@ -2,7 +2,9 @@
 
 Desde la aparición de los modelos de lenguaje, se ha buscado su uso en entornos corporativos para tareas de automatización, consulta, asistencia, etc. La consecuencia de esto es que muchos de estos modelos tienen acceso a información crítica de la organización, como bases de datos o servicios, lo que permite a los atacantes buscar formas de que este modelo falle y acceda a información confidencial, ya sea obteniéndola o modificándola.
 
-Este trabajo propone un entorno controlado que simula un caso corporativo con datos de clientes y un orquestador que controla el flujo de peticiones al modelo de lenguaje. El objetivo es simular ataques al modelo y proponer mitigaciones.
+Este trabajo propone un entorno controlado que simula un caso corporativo con datos de clientes y un orquestador que controla el flujo de peticiones al modelo de lenguaje. En este contexto, el orquestador es la capa intermedia que recibe la solicitud del usuario, decide qué acciones ejecutar (por ejemplo, consultar una base de datos o invocar una función) y finalmente construye la respuesta. El objetivo es simular ataques al modelo y proponer mitigaciones.
+
+El código fuente utilizado en este trabajo está disponible en: \url{https://github.com/Carva70/tfm}.
 
 \section{Objetivos principales}
 
